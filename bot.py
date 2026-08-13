@@ -20,6 +20,24 @@ SERVICE_ACCOUNT_FILE = 'service_account.json'
 SCOPES = ['https://www.googleapis.com/auth/drive']
 WAITING_FOR_FILENAME, WAITING_FOR_CONFIG = range(2)
 
+# JSON'u oluştur
+SERVICE_ACCOUNT_DATA = {
+    "type": "service_account",
+    "project_id": "hemdem",
+    "private_key_id": "ef5c4252d896057d8f3dbf48ee62ed234f4cc8a4",
+    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC9l3vu229e6C8k\n4R5idO5ZFb7f+YMC+QqZQ5oBg0IZQp0c0hzu/aWo+iTDKuuKHidPD0iiP7NPl8SL\nx28xRO6z+Gxot1d5JtDQbd31Bie7ahmz50uwr13LlYOUCc0MqupPlKKC9WzNfray\nbv1Gn3D4vsn7klXo29aVb7YZDJQIFWV6X6dlJKZKDML1SNOH9l8Rc3CJQOma7yxT\nUGJOZoEwHzp0QMFVuWNfej07UVb/fvJKsbAMUxIJzfmGzHOlKwEwkrNr0BkRVM33\niT0clX3cQ+ygM9ggeKpmv+zbmnodlm6nSWSjSAX7qjCfkDZYtuGNJ5334RYBBjeD\nZR5dtU3NAgMBAAECggEALRlLQErPh8Z4bG/mf+orxmIvWOzr9rmSBVo42LJF92dK\no0/x1QHeNb9nHkvn4p+An0RV9U5s03qZJNzofNJWa9Ykx5YRRz7t/h6cZUw1CFZZ\nTduvvBRDHgnvVjgsoB5KBWsoazmBS7KgN/rB4dpMj8cmmeK5793Xgg2kRfohfnhb\nYu2ZImP7Eof6mckJrKAHuBhf2cWg1VI3DH+pC+MsXnuF5RH99PZNmmWNhBg5FJX6\njvZdPut0vAVC2QH4SBMgt5ziytgXWwb82IvPwgiZf6Sal6CRNAGjV0QrRoxYQ12h\nkkUXaIuQ/wyQhKDEDHJI6KAB+2PO3IZcmSUm/UtYMQKBgQDthJzTssng5iXeRnm/\nLlz2hKazaAFxUthvq+Q5E41rSNZln4H0qTs4I5+G2zdmV/GfOLHqWWAds4uksvet\ntNYK7LOq1H7s4VxZeVRMHpltLEogHS+COx43LGe10IxZtPYKR1+AVHDXY/hslX8M\nuZryT3bnvF4+6ZSWdNQb2bsYpQKBgQDMWCyYdxitB27E7YtTadH1LhacZllhhcIc\nog65GrlryuTRxFWFpOj/I6nHQQtyBDmISvD3DHEd6GrDRdSz6E/ChIMTZpa4xsc3\nxDVQZwi5uXDj+3TXOIFWmVNFgbz72fW+LRyU3APUs05K54Uo6XN8tC365EKJ1xwW\nqHJIiXCwCQKBgCTOpC76SeacQ8oKSduip61cKSksOO0C1Z+Yl6lwqj2x7+eXrF/p\nyc+NVa9kUVV+02bFNm0GpKp1pHJFebRljbXrsHwMqg6zbcg/0RxqsYQFlQcc/rvD\nxY7vRrMaOmW8cVRucxJEA6idSWYqVKH4MVbTka2ft0swj2IxgJ1ARIoxAoGAOscG\nFNj1BRhFOWnmkJi4puCZ6mTaQt35psjKmV3hher3hIsH2ohD6Ne2RzUjeKlUbyq3\nQyiWBPdMdlzIwPMKtjXtihARPJcYyKasezMX5Gw916YFxr5fHay+shiOZpccQ5aw\nSPU8ONtWot8Tg2AbMvyU2Tz9Eq8ISlArh0fZXRkCgYEAqjuExxX7tl8M30qNbH+X\nmJ6Fjjt5h2ysipCLmldqnY2xW2KRR1LM19dCVJEGKCbEacInsh9+ugZMbragRU7C\nYYAoeVsKOATmpa1riOYPNeyTQTni0cVTukYXkYl9y5XHytBh6X+34mtAIt5rNERx\nZpa4oY/j18V6RX7yQ9lzMdI=\n-----END PRIVATE KEY-----\n",
+    "client_email": "configbot@hemdem.iam.gserviceaccount.com",
+    "client_id": "111010915854395320725",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/configbot%40hemdem.iam.gserviceaccount.com",
+    "universe_domain": "googleapis.com"
+}
+
+with open(SERVICE_ACCOUNT_FILE, 'w') as f:
+    json.dump(SERVICE_ACCOUNT_DATA, f)
+
 class ConfigBot:
     def __init__(self):
         self.drive_service = None
