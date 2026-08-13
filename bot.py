@@ -18,9 +18,9 @@ API_KEY = 'AIzaSyDxZxoxeHEeseIt10HXDo1fkTNvQt1NHSI'
 DATABASE_FILE = 'files.json'
 SERVICE_ACCOUNT_FILE = 'service_account.json'
 SCOPES = ['https://www.googleapis.com/auth/drive']
+FOLDER_ID = '1Q3dlqMPxjoHpYrIq6u_Wv_NUG2SUBdDe'
 WAITING_FOR_FILENAME, WAITING_FOR_CONFIG = range(2)
 
-# JSON'u oluştur
 private_key = """-----BEGIN PRIVATE KEY-----
 MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDo7voXndDvySFo
 1RoXH+gSH1gt/uJjqS/FPV6qwYnQglTWQTcgzZKij88k0nR9rAvXad3E1I+DbJz1
@@ -116,7 +116,7 @@ class ConfigBot:
             )
             
             file = self.drive_service.files().create(
-                body={'name': file_name},
+                body={'name': file_name, 'parents': [FOLDER_ID]},
                 media_body=media,
                 fields='id'
             ).execute()
