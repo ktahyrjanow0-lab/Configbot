@@ -18,7 +18,7 @@ API_KEY = 'AIzaSyDxZxoxeHEeseIt10HXDo1fkTNvQt1NHSI'
 DATABASE_FILE = 'files.json'
 SERVICE_ACCOUNT_FILE = 'service_account.json'
 SCOPES = ['https://www.googleapis.com/auth/drive']
-FOLDER_ID = '1NKSMENnf7dI5JEzzBN5F-CCOgsS3dv34Fh'
+FOLDER_ID = '1Q3dlqMPxjoHpYrIq6u_Wv_NUG2SUBdDe'
 WAITING_FOR_FILENAME, WAITING_FOR_CONFIG = range(2)
 
 private_key = """-----BEGIN PRIVATE KEY-----
