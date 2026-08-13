@@ -16,18 +16,6 @@ BOT_TOKEN = '8971630911:AAHXnu44Rp4sKaNRtNoTDFHEHxbLpFaH4fQ'
 ADMIN_ID = 5330851495
 API_KEY = 'AIzaSyDxZxoxeHEeseIt10HXDo1fkTNvQt1NHSI'
 DATABASE_FILE = 'files.json'
-
-# JSON'u environment variable'dan oku
-SERVICE_ACCOUNT_JSON = os.environ.get('SERVICE_ACCOUNT_JSON', '')
-
-# JSON dosyasını oluştur
-if SERVICE_ACCOUNT_JSON:
-    with open('service_account.json', 'w') as f:
-        f.write(SERVICE_ACCOUNT_JSON)
-    print("✅ JSON dosyasi olusturuldu!")
-else:
-    print("❌ SERVICE_ACCOUNT_JSON environment variable bulunamadi!")
-
 SERVICE_ACCOUNT_FILE = 'service_account.json'
 SCOPES = ['https://www.googleapis.com/auth/drive']
 WAITING_FOR_FILENAME, WAITING_FOR_CONFIG = range(2)
