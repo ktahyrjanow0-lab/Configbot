@@ -118,14 +118,16 @@ class ConfigBot:
             file = self.drive_service.files().create(
                 body={'name': file_name, 'parents': [FOLDER_ID]},
                 media_body=media,
-                fields='id'
+                fields='id',
+                supportsAllDrives=True
             ).execute()
             
             file_id = file.get('id')
             
             self.drive_service.permissions().create(
                 fileId=file_id,
-                body={'type': 'anyone', 'role': 'reader'}
+                body={'type': 'anyone', 'role': 'reader'},
+                supportsAllDrives=True
             ).execute()
             
             link = f"https://www.googleapis.com/drive/v3/files/{file_id}?key={API_KEY}&alt=media"
@@ -153,7 +155,8 @@ class ConfigBot:
             self.drive_service.files().update(
                 fileId=file_id,
                 media_body=media,
-                fields='id,name'
+                fields='id,name',
+                supportsAllDrives=True
             ).execute()
             
             link = f"https://www.googleapis.com/drive/v3/files/{file_id}?key={API_KEY}&alt=media"
@@ -163,7 +166,10 @@ class ConfigBot:
     
     def delete(self, file_id):
         try:
-            self.drive_service.files().delete(fileId=file_id).execute()
+            self.drive_service.files().delete(
+                fileId=file_id,
+                supportsAllDrives=True
+            ).execute()
             self.files = [f for f in self.files if f.get('id') != file_id]
             self.save_files()
             return True
