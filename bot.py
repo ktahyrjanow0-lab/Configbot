@@ -3,7 +3,6 @@ import logging
 import datetime
 import io
 import json
-import base64
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, CallbackQueryHandler, ContextTypes, ConversationHandler, filters
 from google.oauth2 import service_account
@@ -21,47 +20,47 @@ SERVICE_ACCOUNT_FILE = 'service_account.json'
 SCOPES = ['https://www.googleapis.com/auth/drive']
 WAITING_FOR_FILENAME, WAITING_FOR_CONFIG = range(2)
 
-# JSON'u string olarak oluştur
+# JSON'u oluştur
 private_key = """-----BEGIN PRIVATE KEY-----
-MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC9l3vu229e6C8k
-4R5idO5ZFb7f+YMC+QqZQ5oBg0IZQp0c0hzu/aWo+iTDKuuKHidPD0iiP7NPl8SL
-x28xRO6z+Gxot1d5JtDQbd31Bie7ahmz50uwr13LlYOUCc0MqupPlKKC9WzNfray
-bv1Gn3D4vsn7klXo29aVb7YZDJQIFWV6X6dlJKZKDML1SNOH9l8Rc3CJQOma7yxT
-UGJOZoEwHzp0QMFVuWNfej07UVb/fvJKsbAMUxIJzfmGzHOlKwEwkrNr0BkRVM33
-iT0clX3cQ+ygM9ggeKpmv+zbmnodlm6nSWSjSAX7qjCfkDZYtuGNJ5334RYBBjeD
-ZR5dtU3NAgMBAAECggEALRlLQErPh8Z4bG/mf+orxmIvWOzr9rmSBVo42LJF92dK
-o0/x1QHeNb9nHkvn4p+An0RV9U5s03qZJNzofNJWa9Ykx5YRRz7t/h6cZUw1CFZZ
-TduvvBRDHgnvVjgsoB5KBWsoazmBS7KgN/rB4dpMj8cmmeK5793Xgg2kRfohfnhb
-Yu2ZImP7Eof6mckJrKAHuBhf2cWg1VI3DH+pC+MsXnuF5RH99PZNmmWNhBg5FJX6
-jvZdPut0vAVC2QH4SBMgt5ziytgXWwb82IvPwgiZf6Sal6CRNAGjV0QrRoxYQ12h
-kkUXaIuQ/wyQhKDEDHJI6KAB+2PO3IZcmSUm/UtYMQKBgQDthJzTssng5iXeRnm/
-Llz2hKazaAFxUthvq+Q5E41rSNZln4H0qTs4I5+G2zdmV/GfOLHqWWAds4uksvet
-tNYK7LOq1H7s4VxZeVRMHpltLEogHS+COx43LGe10IxZtPYKR1+AVHDXY/hslX8M
-uZryT3bnvF4+6ZSWdNQb2bsYpQKBgQDMWCyYdxitB27E7YtTadH1LhacZllhhcIc
-og65GrlryuTRxFWFpOj/I6nHQQtyBDmISvD3DHEd6GrDRdSz6E/ChIMTZpa4xsc3
-xDVQZwi5uXDj+3TXOIFWmVNFgbz72fW+LRyU3APUs05K54Uo6XN8tC365EKJ1xwW
-qHJIiXCwCQKBgCTOpC76SeacQ8oKSduip61cKSksOO0C1Z+Yl6lwqj2x7+eXrF/p
-yc+NVa9kUVV+02bFNm0GpKp1pHJFebRljbXrsHwMqg6zbcg/0RxqsYQFlQcc/rvD
-xY7vRrMaOmW8cVRucxJEA6idSWYqVKH4MVbTka2ft0swj2IxgJ1ARIoxAoGAOscG
-FNj1BRhFOWnmkJi4puCZ6mTaQt35psjKmV3hher3hIsH2ohD6Ne2RzUjeKlUbyq3
-QyiWBPdMdlzIwPMKtjXtihARPJcYyKasezMX5Gw916YFxr5fHay+shiOZpccQ5aw
-SPU8ONtWot8Tg2AbMvyU2Tz9Eq8ISlArh0fZXRkCgYEAqjuExxX7tl8M30qNbH+X
-mJ6Fjjt5h2ysipCLmldqnY2xW2KRR1LM19dCVJEGKCbEacInsh9+ugZMbragRU7C
-YYAoeVsKOATmpa1riOYPNeyTQTni0cVTukYXkYl9y5XHytBh6X+34mtAIt5rNERx
-Zpa4oY/j18V6RX7yQ9lzMdI=
+MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDo7voXndDvySFo
+1RoXH+gSH1gt/uJjqS/FPV6qwYnQglTWQTcgzZKij88k0nR9rAvXad3E1I+DbJz1
+uZ7dnjWR8i3oBlS0/8OYguDxONwjKdUL9jssMU5tVOfLsw+eObOZKdZZxHzyUfrq
+q72YBuS0BwDnt3kkJAmOooi4Esh9QjWusVrdHM0X0JABucIIZ8d9Dk7foWAftt3d
+Pwy2THF22tAfDlsHYM86sTr6J+8OIGzu3jjG+lhx4YvHK/X94IDUwBAOlD2a3axF
+C6bRD5m0kmdB6yZcWEv6yQS5uMTAgnmLyZUVwRMaPbHs4noqkS69lutCmixUFKmt
+6Mg+kvazAgMBAAECggEAIFqpVERwdA383QHUmOeupW3DIshni65BW2U11AQD73la
+7VOro5vKRVgyTowI8DfIgUhMLH3V3Uxl1N/OiDvkdvwrkjHm7CkmcvWi5v6d3Sh/
+ViUCfRXwLdGATNP3VGPxZVHhWyCmtkXa02O9dvNmKvdaEdVzNyjmRvCeiurY/ETF
+MfyJp/v4bgSHw2uY5yeOi80UMnXTY8pP8WY4hL40zzZKUsyG4l/jIobGuY5MmtsO
+BoDe3/98s4XRg5SXqyaAhWYnAI6Q0EZIJPo2AcLa4tIcybSwaaSWRipkM7z7/eBr
+R+3jvtddLbvUkGGA0SeufmRxNbU/XS5DZMhVBeBjAQKBgQD6hdpfxWt1L+5jdvZc
+u8aF40FExgvmjMrJYRzz48O0C2mPWAcVs2mvnF1iVTgcUTsXcpEPYJVh6ULt69Yf
+/GPSJyjrP9paUuP4cQFxUwaNHlZR0m00Ck9AClLlFvj8r3aciEDg3zBx4IfAYk6v
+tgRr5d7KMUjhczoyTp0eCpE6gQKBgQDuBq2mkciPnfNHWCHoGsFv2jZUnBJ0uDFo
+45BBZ4HcyvGlUC+/hgB5WJYC/NG6PR3HgcnKWWtwjq3xQdbTypZBSLIaIQ2ZLr8q
+5F5+KXJLOZlSNqvBQ+r1MfCzG2PM0r5ExsGa6Q5WVQuuUobu6WnQiUmBjVNJhDMt
+S8lEDlbPMwKBgHhjtqtrbdZk8ERwOLgbrK1OpmDsY2+pnRHlT0qM29E74sB15wGw
+tEsl82J73XkOOD1uWvNu0Jq6w+Ud/kpkuXuWQf27M61QRClx9OWGppFOUOEFJGFr
+yuXVkDxzK7gSggd7GuJ1nww6gEIde/7Ik5teXhAAWyusef0O9kYngd8BAoGBAMcE
+5Hsq1+Rlb/2OTkNw455veRADs1bOj9mgtIRLVITVV3ke892S4KCVllCHLaEn6tde
+yOedHr1tPzlDEKnjcQDDFM/OJT2YnZTyf6PDaeJGFdFtDu04qaM8j4Jie27OIvME
+sOqixS8gSvUF4favSZ9ouwJMtX/5voS4Il/6EVGLAoGARpIkS4NHGsEVNI/AwlLA
+3ipWPGECGzynqrMA03pYcxXChP35pVHtS7sUbum9OhOla0yfxsmtwxQT9VMg58jS
+SfRSQD2YuLhRqyqGilfkFrTc0p0Po0ItyHdlewQGjQQe+dmMnwWSoNsCMqbod6US
+hMoWvMBNwUDN5vdQpit3cFc=
 -----END PRIVATE KEY-----"""
 
 SERVICE_ACCOUNT_DATA = {
     "type": "service_account",
     "project_id": "hemdem",
-    "private_key_id": "ef5c4252d896057d8f3dbf48ee62ed234f4cc8a4",
+    "private_key_id": "c2a205444139304c77d6ae454cc21d8d398b2b9b",
     "private_key": private_key,
-    "client_email": "configbot@hemdem.iam.gserviceaccount.com",
-    "client_id": "111010915854395320725",
+    "client_email": "yenetaza@hemdem.iam.gserviceaccount.com",
+    "client_id": "113123003631682176503",
     "auth_uri": "https://accounts.google.com/o/oauth2/auth",
     "token_uri": "https://oauth2.googleapis.com/token",
     "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/configbot%40hemdem.iam.gserviceaccount.com",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/yenetaza%40hemdem.iam.gserviceaccount.com",
     "universe_domain": "googleapis.com"
 }
 
